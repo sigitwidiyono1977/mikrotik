@@ -1,0 +1,24 @@
+## PPP Up
+:local nama "$user";
+:local ips [/ppp active get [find name=$nama] address];
+:local up [/ppp active get [find name=$nama] uptime];
+:local caller [/ppp active get [find name=$nama] caller-id];
+:local service [/ppp active get [find name=$nama] service];
+:local active [/ppp active print count];
+:local datetime "Tanggal: $[/system clock get date] %0AJam: $[/system clock get time]";
+:local lastdisc [/ppp secret get [find name=$user] last-disconnect-reason];
+:local lastlogout [/ppp secret get [find name=$user] last-logged-out];
+:local datetime "Tanggal%3A%20$[/system clock get date]%0AJam%3A%20$[/system clock get time]";
+
+/tool fetch url="https://api.namawebsite.com/send?target=nomorhp&message=PPP-LOGIN%0A$datetime%0AUser%3A%20$user%0AIP%20Client%3A%20$ips%0ACaller%20ID%3A%20$caller%0AUptime%3A%20$up%0ATotal%20Active%3A%20$active%0AClient%20Service%3A%20$service%0ALast%20Disconnect%20Reason%3A%20$lastdisc&token=tokendariwebsite" mode=http keep-result=no;
+
+
+## PPP Down
+:local datetime "Tanggal%3A%20$[/system clock get date]%0AJam%3A%20$[/system clock get time]";
+
+:local nama "$user";
+:local lastdisc [/ppp secret get [find name=$nama] last-disconnect-reason];
+:local lastcall [/ppp secret get [find name=$nama] last-caller-id];
+:local active [/ppp active print count];
+
+/tool fetch url="https://api.namawebsite.com/send?target=nomorhp&message=PPP-LOGOUT%0A$datetime%0AUser%3A%20$user%0AIP%20Client%3A%20$lastcall%0ATotal%20Active%3A%20$active&token=tokenderiwebsite" mode=http keep-result=no;
